@@ -10,8 +10,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "note")
-public class Note {
+@Table(name = "user_data")
+public class UserData {
 
   /**
    * UUIDv7
@@ -20,6 +20,9 @@ public class Note {
   @Column(name = "id")
   private UUID id;
 
-  @Column(name = "content", nullable = false)
-  private String content;
+  @Column(name = "username", nullable = false)
+  private String username;
+
+  @Column(name = "password", nullable = false)
+  private String password;
 }

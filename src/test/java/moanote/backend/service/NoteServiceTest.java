@@ -20,12 +20,4 @@ class NoteServiceTest {
 
     @Autowired
     private NoteService noteService;
-
-    @Test
-    void createAndUpdateNote() {
-        Note note = noteService.createNote();
-        noteService.updateNote(note.getId(), "Hello, World!");
-        Note createdNote = noteService.getNoteById(note.getId());
-        Assert.isTrue(createdNote.getContent().equals("Hello, World!"), "Content is not updated\n");
-    }
 }
