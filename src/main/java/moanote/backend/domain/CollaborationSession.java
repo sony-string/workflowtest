@@ -1,9 +1,10 @@
 package moanote.backend.domain;
 
 import moanote.backend.entity.Note;
-import moanote.backend.entity.User;
+import moanote.backend.entity.UserData;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,7 +22,7 @@ public class CollaborationSession {
   /**
    * 동시 편집에 참여하는 사용자 목록입니다. ConcurrentHashMap 으로 Thread-safe 하게 관리합니다.
    */
-  final private Map<Long, User> participants;
+  final private Map<UUID, UserData> participants;
 
   public CollaborationSession(Note note) {
     this.lwwRegister = new LWWRegister<>("init", 0, new LWWNoteContent(note.getContent()));
@@ -31,19 +32,19 @@ public class CollaborationSession {
   /**
    * 수정에 참여하는 사용자를 추가하는 Thread-safe 메소드입니다.
    *
-   * @param user 수정에 참여한 사용자
+   * @param userData 수정에 참여한 사용자
    */
-  public void addParticipant(User user) {
-    participants.put(user.getId(), user);
+  public void addParticipant(UserData userData) {
+    participants.put(userData.getId(), userData);
   }
 
   /**
    * 동시 편집에 더 이상 참여하지 않는 사용자를 제거하는 Thread-safe 메소드입니다.
    *
-   * @param user 수정자 목록에서 제거할 사용자
+   * @param userData 수정자 목록에서 제거할 사용자
    */
-  public void removeParticipant(User user) {
-    participants.remove(user.getId());
+  public void removeParticipant(UserData userData) {
+    participants.remove(userData.getId());
   }
 
   /**
@@ -51,7 +52,7 @@ public class CollaborationSession {
    *
    * @return 수정에 참여하는 사용자 목록
    */
-  public Map<Long, User> getParticipants() {
+  public Map<UUID, UserData> getParticipants() {
     return Collections.unmodifiableMap(participants);
   }
 

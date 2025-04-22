@@ -3,11 +3,12 @@ package moanote.backend.service;
 import moanote.backend.domain.CollaborationSession;
 import moanote.backend.dto.CreateCollaborationSessionDTO;
 import moanote.backend.entity.Note;
-import moanote.backend.entity.User;
+import moanote.backend.entity.UserData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class CollaborativeEditingService {
 
-  final private Map<String, CollaborationSession> collaborationSessions;
+  final private Map<UUID, CollaborationSession> collaborationSessions;
 
   final private NoteService noteService;
 
@@ -31,7 +32,7 @@ public class CollaborativeEditingService {
     this.collaborationSessions = new ConcurrentHashMap<>();
   }
 
-  public List<User> getUsersInSession(String sessionId) {
+  public List<UserData> getUsersInSession(UUID sessionId) {
     CollaborationSession session = collaborationSessions.get(sessionId);
     if (session != null) {
       return session.getParticipants().values().stream().toList();
@@ -41,22 +42,24 @@ public class CollaborativeEditingService {
 
   /**
    * 협업 세션 생성의 entry point. 세션 ID 는 아마도 STOMP 에서 생성된 UUID 를 사용하게 될 것 같습니다.
+   *
    * @param request 세션 생성 요청 DTO
    */
   public void createSession(CreateCollaborationSessionDTO request) {
     Note note = noteService.getNoteById(request.noteId());
     // TODO@ User 와 UserRepository 는 다른 기능 추가 중 변경 될 예정
-    User participant = userService.findByUsername(request.sessionCreateUserId());
+    UserData participant = userService.findByUsername(request.sessionCreateUserId());
     doCreateSession(note, participant, request.sessionId());
   }
 
   /**
    * 세션을 실제로 생성하는 메소드. 기능과 DB 및 Service 와의 의존성을 분리하기 위해 만들어졌습니다.
-   * @param note 동시 수정 대상 노트
+   *
+   * @param note        동시 수정 대상 노트
    * @param participant 동시 수정 세션 참여자
-   * @param sessionId 세션 ID
+   * @param sessionId   세션 ID
    */
-  public void doCreateSession(Note note, User participant, String sessionId) {
+  public void doCreateSession(Note note, UserData participant, UUID sessionId) {
     CollaborationSession session = new CollaborationSession(note);
     session.addParticipant(participant);
     collaborationSessions.put(sessionId, session);

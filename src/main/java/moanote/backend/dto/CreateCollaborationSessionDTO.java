@@ -1,8 +1,10 @@
 package moanote.backend.dto;
 
+import java.util.UUID;
+
 public record CreateCollaborationSessionDTO(
-    String sessionId,
-    Long noteId,
+    UUID sessionId,
+    UUID noteId,
     String sessionCreateUserId
 ) {
 
