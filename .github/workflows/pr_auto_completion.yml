@@ -27,11 +27,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const inputPrNumber = context.payload.inputs?.pr_number;
-            if (inputPrNumber) {
-              console.log('input number : ' + inputPrNumber);
-            } else {
-              console.log('input number is null');
-            }
             const prNumber = inputPrNumber
                 ? parseInt(inputPrNumber)
               : context.payload.pull_request.number;
@@ -48,7 +43,7 @@ jobs:
             const commitMessages = [];
             const issues = new Set();
 
-            console.log('[Commits found]\n' + commits);
+            console.log('[Commits found]\n' + commits.map(c => c.commit.message).join('\n'));
 
             commits.forEach(({ commit }) => {
               // 첫 줄만 사용
@@ -83,9 +78,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const inputPrNumber = context.payload.inputs?.pr_number;
+            const prNumber = inputPrNumber
+                ? parseInt(inputPrNumber)
+              : context.payload.pull_request.number;
             await github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
+              pull_number: prNumber,
               body: ${{ steps.generate_body.outputs.result }}
             });
