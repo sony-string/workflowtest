@@ -16,34 +16,34 @@ import moanote.backend.security.CustomUserDetailsService;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService userDetailsService;
+  private final CustomUserDetailsService userDetailsService;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-            .csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/home")
-                .permitAll()
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginPage("/login") // 커스텀 로그인 페이지
-                .defaultSuccessUrl("/home", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-            )
-            .userDetailsService(userDetailsService)
-            .build();
-    }
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf().disable()
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/login", "/register", "/home")
+            .permitAll()
+            .anyRequest().authenticated()
+        )
+        .formLogin(form -> form
+            .loginPage("/login") // 커스텀 로그인 페이지
+            .defaultSuccessUrl("/home", true)
+            .permitAll()
+        )
+        .logout(logout -> logout
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login?logout")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+        )
+        .userDetailsService(userDetailsService)
+        .build();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

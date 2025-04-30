@@ -1,7 +1,7 @@
 package moanote.backend.security;
 
-import moanote.backend.repository.UserRepository;
-import moanote.backend.entity.User;
+import moanote.backend.entity.UserData;
+import moanote.backend.repository.UserDataRepository;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,19 +12,18 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository repo;
+  private final UserDataRepository userDataRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // username으로 Repository에서 user을 찾는 method
-        User user = repo.findByUsername(username);
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserData user = userDataRepository.findByUsername(username);
 
-        if(user == null){
-            throw new UsernameNotFoundException("계정을 찾을 수 없습니다.");
-        }
-
-        return new CustomUserDetails(user);
+    if (user == null) {
+      throw new UsernameNotFoundException("계정을 찾을 수 없습니다.");
     }
+
+    return new CustomUserDetails(user);
+  }
 }
