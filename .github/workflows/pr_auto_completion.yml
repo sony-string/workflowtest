@@ -2,7 +2,7 @@ name: "Auto PR Description"
 
 on:
   pull_request:
-    types: [opened, edited, reopened]
+    types: [ opened, edited, reopened, synchronize ]
 
 permissions:
   pull-requests: write
@@ -32,7 +32,10 @@ jobs:
             );
             const validTypes = ['feat', 'fix', 'refactor', 'docs', 'chore'];
             const performed = new Set();
+            const commitMessages = [];
             const issues = new Set();
+
+            console.log('[Commits found]\n' + commits);
 
             commits.forEach(({ commit }) => {
               // 첫 줄만 사용
@@ -43,17 +46,25 @@ jobs:
                 let [_, type, title, issue] = m;
                 if (!validTypes.includes(type)) type = 'chore';
                 performed.add(type);
+                commitMessages.push({ type: type, title: title });
                 issues.add(issue);
               }
             });
 
             // 수행한 작업 리스트 작성
             const 작업 = Array.from(performed)
-              .map(type => `- ${type}`)
+              .map(type => {
+                const titles = commitMessages
+                  .filter(msg => msg.type === type)
+                  .map(msg => `- ${msg.title}`);
+                return `### ${type}\n${titles.join('\n')}`;
+              })
               .join('\n');
-            const 이슈목록 = Array.from(issues).join(' ');
+            const 이슈목록 = Array.from(issues)
+              .map(issueNumber -> `- ${issueNumber}`)
+              .join('\n');
 
-            return `### 수행한 작업\n${작업}\n\n### 설명\n\n### 관련 이슈\n${이슈목록}`;
+            return `## 수행한 작업\n${작업}\n\n## 설명\n\n## 관련 이슈\n${이슈목록}`;
 
       - name: Update PR description
         uses: actions/github-script@v6
