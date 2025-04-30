@@ -26,7 +26,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const inputPrNumber = core.getInput('pr_number');
+            const inputPrNumber = context.payload.inputs?.pr_number;
             if (inputPrNumber) {
               console.log('input number : ' + inputPrNumber);
             } else {
