@@ -51,10 +51,10 @@ jobs:
               const pattern = /^(\w+)(?:\(([^)]+)\))?:\s(.+?)(?:\s(#\d+))?$/;
               const m = line.match(pattern);
               if (m) {
-                let [_, type, title, issue] = m;
+                let [, type, scope, title, issue] = m;
                 performed.add(type);
                 commitMessages.push({ type: type, title: title });
-                issues.add(issue);
+                if (issue) issues.add(issue);
               }
             });
 
