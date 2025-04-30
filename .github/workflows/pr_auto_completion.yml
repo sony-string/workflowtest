@@ -48,7 +48,7 @@ jobs:
             commits.forEach(({ commit }) => {
               // 첫 줄만 사용
               const line = commit.message.split('\n')[0];
-              const pattern = /^(\w+)(?:\([^)]+\))?: (.+?) (#\d+)$/;
+              const pattern = /^(\w+)(?:\(([^)]+)\))?:\s(.+?)(?:\s(#\d+))?$/;
               const m = line.match(pattern);
               if (m) {
                 let [_, type, title, issue] = m;
