@@ -1,0 +1,68 @@
+name: "Auto PR Description"
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  update-pr-description:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate PR description
+        id: generate_body
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // 가져온 커밋 메시지에서 type과 issue 추출
+            const commits = await github.paginate(
+              github.rest.pulls.listCommits,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number
+              }
+            );
+            const validTypes = ['feat', 'fix', 'refactor', 'docs', 'chore'];
+            const performed = new Set();
+            const issues = new Set();
+
+            commits.forEach(({ commit }) => {
+              // 첫 줄만 사용
+              const line = commit.message.split('\n')[0];
+              const pattern = /^(\w+)(?:\([^)]+\))?: (.+?) (#\d+)$/;
+              const m = line.match(pattern);
+              if (m) {
+                let [_, type, title, issue] = m;
+                if (!validTypes.includes(type)) type = 'chore';
+                performed.add(type);
+                issues.add(issue);
+              }
+            });
+
+            // 수행한 작업 리스트 작성
+            const 작업 = Array.from(performed)
+              .map(type => `- ${type}`)
+              .join('\n');
+            const 이슈목록 = Array.from(issues).join(' ');
+
+            return `### 수행한 작업\n${작업}\n\n### 설명\n\n### 관련 이슈\n${이슈목록}`;
+
+      - name: Update PR description
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              body: `${{ steps.generate_body.outputs.result }}`
+            });
