@@ -2,7 +2,13 @@ name: "Auto PR Description"
 
 on:
   pull_request:
-    types: [ opened, edited, reopened, synchronize ]
+    pull_request:
+      types: [opened, synchronize]
+    workflow_dispatch:
+      inputs:
+        pr_number:
+          description: 'PR 번호 (수동 실행용)'
+          required: true
 
 permissions:
   pull-requests: write
@@ -21,21 +27,24 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            // 가져온 커밋 메시지에서 type과 issue 추출
+            const inputPrNumber = core.getInput('pr_number');
+            const prNumber = inputPrNumber
+              ? parseInt(inputPrNumber)
+              : context.payload.pull_request.number;
+
             const commits = await github.paginate(
               github.rest.pulls.listCommits,
               {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: context.payload.pull_request.number
+                pull_number: prNumber
               }
             );
-            const validTypes = ['feat', 'fix', 'refactor', 'docs', 'chore'];
             const performed = new Set();
             const commitMessages = [];
             const issues = new Set();
 
-            console.log('[Commits found]\n' + commits.map(c => c.commit.message).join('\n'));
+            console.log('[Commits found]\n' + commits);
 
             commits.forEach(({ commit }) => {
               // 첫 줄만 사용
@@ -44,7 +53,6 @@ jobs:
               const m = line.match(pattern);
               if (m) {
                 let [_, type, title, issue] = m;
-                if (!validTypes.includes(type)) type = 'chore';
                 performed.add(type);
                 commitMessages.push({ type: type, title: title });
                 issues.add(issue);
