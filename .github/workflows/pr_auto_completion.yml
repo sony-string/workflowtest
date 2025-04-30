@@ -61,7 +61,7 @@ jobs:
               })
               .join('\n');
             const 이슈목록 = Array.from(issues)
-              .map(issueNumber -> `- ${issueNumber}`)
+              .map(issueNumber => `- ${issueNumber}`)
               .join('\n');
 
             return `## 수행한 작업\n${작업}\n\n## 설명\n\n## 관련 이슈\n${이슈목록}`;
