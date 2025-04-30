@@ -27,9 +27,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const inputPrNumber = core.getInput('pr_number');
-            console.log('input number ? :' + inputPrNumber);
+            if (inputPrNumber) {
+              console.log('input number : ' + inputPrNumber);
+            } else {
+              console.log('input number is null');
+            }
             const prNumber = inputPrNumber
-              ? parseInt(inputPrNumber)
+                ? parseInt(inputPrNumber)
               : context.payload.pull_request.number;
 
             const commits = await github.paginate(
