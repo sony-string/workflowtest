@@ -27,6 +27,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const inputPrNumber = core.getInput('pr_number');
+            console.log('input number ? :' + inputPrNumber);
             const prNumber = inputPrNumber
               ? parseInt(inputPrNumber)
               : context.payload.pull_request.number;
