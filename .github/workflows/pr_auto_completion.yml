@@ -43,7 +43,7 @@ jobs:
             const commitMessages = [];
             const issues = new Set();
 
-            console.log('[Commits found]\n' + commits.map(c => c.commit.message).join('\n'));
+            console.log('[Commits found]\n' + commits.map(c => c.commit.message + c.sha).join('\n'));
 
             commits.forEach(({ commit }) => {
               // 첫 줄만 사용
