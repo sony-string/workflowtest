@@ -63,7 +63,7 @@ jobs:
               .map(type => {
                 const titles = commitMessages
                   .filter(msg => msg.type === type)
-                  .map(msg => `- ${msg.title} [\`${msg.sha.slice(0, 7)}\`](${msg.sha})`);
+                  .map(msg => `- ${msg.title} ${msg.sha.slice(0, 7)}`);
                 return `### ${type}\n${titles.join('\n')}`;
               })
               .join('\n');
