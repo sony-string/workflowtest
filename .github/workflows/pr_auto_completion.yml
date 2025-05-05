@@ -53,8 +53,8 @@ jobs:
               if (m) {
                 let [, type, scope, title, issue] = m;
                 performed.add(type);
-                commitMessages.push({ type: type, title: title, sha: commit.sha });
-                console.log('sha: ' + commit.sha);
+                commitMessages.push({ type: type, title: title, sha: commit['sha'] });
+                console.log('sha: ' + commit['sha']);
                 if (issue) issues.add(issue);
               }
             });
