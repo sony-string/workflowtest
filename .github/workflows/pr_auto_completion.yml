@@ -44,7 +44,7 @@ jobs:
             const issues = new Set();
 
             console.log('[Commits found]\n' + commits.map(c => c.commit.message).join('\n'));
-            for (const commit of commits.data) {
+            for (const commit of commits) {
               console.log(commit.sha); // 커밋 해시
             }
 
