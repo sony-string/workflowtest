@@ -52,7 +52,7 @@ jobs:
           PROJECT_NUMBER=4
 
           echo "Fetching project ID..."
-          gh api graphql -f query='
+          echo $(gh api graphql -f query='
             query($org: String!) {
                 user(login: $org){
                     projectsV2(first: 20) {
@@ -62,7 +62,7 @@ jobs:
                       }
                     }
                 }
-              } ' -f org=$ORG
+              } ' -f org=$ORG)
           gh api graphql -f query='
             query($org: String!, $number: Int!) {
                 user(login: $org){
