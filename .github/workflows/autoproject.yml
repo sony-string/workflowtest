@@ -53,6 +53,17 @@ jobs:
 
           echo "Fetching project ID..."
           gh api graphql -f query='
+            query($org: String!) {
+                user(login: $org){
+                    projectsV2(first: 20) {
+                      nodes {
+                        id
+                        title
+                      }
+                    }
+                }
+              } ' -f org=$ORG
+          gh api graphql -f query='
             query($org: String!, $number: Int!) {
                 user(login: $org){
                     projectV2(number: $number) {
