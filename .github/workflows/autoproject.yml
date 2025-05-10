@@ -46,7 +46,7 @@ jobs:
         if: steps.check_user.outputs.is_member == 'true'
         id: metadata
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           ORG="sony-string"
           PROJECT_NUMBER=4
@@ -99,7 +99,7 @@ jobs:
         if: steps.check_user.outputs.is_member == 'true'
         id: add_item
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           gh api graphql -f query='
             mutation($project: ID!, $content: ID!) {
@@ -119,7 +119,7 @@ jobs:
       - name: Set fields (Status and Sprint-Iteration)
         if: steps.check_user.outputs.is_member == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           ITEM_ID=${{ steps.add_item.outputs.item_id }}
 
