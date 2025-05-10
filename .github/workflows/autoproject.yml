@@ -52,21 +52,21 @@ jobs:
                   id
                   fields(first: 20) {
                     nodes {
-                      id
-                      name
-                      dataType
                       ... on ProjectV2SingleSelectField {
+                        id
+                        name
                         options {
                           id
                           name
                         }
                       }
                       ... on ProjectV2IterationField {
+                        id
+                        name
                         configuration {
                           iterations {
-                            id
                             startDate
-                            title
+                            id
                           }
                         }
                       }
