@@ -45,9 +45,9 @@ jobs:
           PROJECT_NUMBER=4
 
           echo "Fetching project ID..."
-          PROJECT_ID=$(gh api graphql -F user=$USER -F number=$PROJECT_NUMBER -f query='
+          PROJECT_ID=$(gh api graphql -F org=$ORG -F number=$PROJECT_NUMBER -f query='
             query($org: String!, $number: Int!) {
-              organization(login: $org) {
+              user(login: $org) {
                 projectV2(number: $number) {
                   id
                   fields(first: 20) {
