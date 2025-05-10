@@ -45,7 +45,7 @@ jobs:
           PROJECT_NUMBER=4
 
           echo "Fetching project ID..."
-          PROJECT_ID=$(gh api graphql -F org=$ORG -F number=$PROJECT_NUMBER -f query='
+          PROJECT_ID=$(gh api graphql -f query='
             query($org: String!, $number: Int!) {
               user(login: $org) {
                 projectV2(number: $number) {
@@ -74,7 +74,7 @@ jobs:
                   }
                 }
               }
-            }' --jq '.data.organization.projectV2' | tee project.json)
+            }'-F org=$ORG -f number=$PROJECT_NUMBER --jq '.data.organization.projectV2' | tee project.json)
 
           echo "Extracting field and option IDs..."
           STATUS_FIELD_ID=$(jq -r '.fields.nodes[] | select(.name=="Status") | .id' project.json)
